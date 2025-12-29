@@ -2,309 +2,220 @@ package QLNS.controller;
 
 import QLNS.dao.NhanVienDAO;
 import QLNS.model.NhanVien;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import QLNS.view.FrmQLTK;
+import QLNS.view.FrmThongTinCaNhan;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.FileWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.JOptionPane;
-import QLNS.view.NhanVienView;
 
 public class NhanVienController {
 
-    private NhanVienView view;
+    private FrmThongTinCaNhan viewNV;
+    private FrmQLTK viewTK;
     private NhanVienDAO dao;
 
-    public NhanVienController() {
-        try {
-            dao = new NhanVienDAO();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Không kết nối được Database!");
-        }
-
-        view = new NhanVienView();
-
-        view.addAddListener(new AddListener());
-        view.addEditListener(new EditListener());
-        view.addDeleteListener(new DeleteListener());
-        view.addSaveListener(new SaveListener());
-        view.addTableClickListener(new TableClick());
-
+    // ... (Giữ nguyên các Constructor) ...
+    public NhanVienController(FrmThongTinCaNhan view) {
+        this.viewNV = view;
+        try { this.dao = new NhanVienDAO(); } 
+        catch (Exception e) { JOptionPane.showMessageDialog(view, "Lỗi kết nối: " + e.getMessage()); return; }
         loadTable();
-        view.setVisible(true);
+        initEvents();
     }
 
-    // ====================================
-    // VALIDATE NGÀY SINH
-    // ====================================
-    private boolean isValidDate(String dateStr) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-        sdf.setLenient(false);
+    public NhanVienController(FrmQLTK view) {
+        this.viewTK = view;
+        try { this.dao = new NhanVienDAO(); } 
+        catch (Exception e) { return; }
+        loadComboBoxMaNV();
+    }
+
+    private void loadTable() {
+        if (viewNV != null) {
+            List<NhanVien> list = dao.getAll();
+            viewNV.showData(list);
+        }
+    }
+
+    // ===== 1. SỬA LẠI: CHECK NGÀY SINH THEO CHUẨN SQL (yyyy-MM-dd) =====
+    private boolean checkNgaySinh(String dateStr) {
+        // Đổi format sang Năm-Tháng-Ngày
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setLenient(false); 
 
         try {
             Date date = sdf.parse(dateStr);
+            Date now = new Date();
 
-            if (date.after(new Date())) {
-                JOptionPane.showMessageDialog(null, "Ngày sinh không được trong tương lai!");
+            if (date.after(now)) {
+                JOptionPane.showMessageDialog(viewNV, "Ngày sinh không được lớn hơn ngày hiện tại!");
                 return false;
             }
 
-            int year = Integer.parseInt(dateStr.substring(6));
-            if (year < 1900) {
-                JOptionPane.showMessageDialog(null, "Năm sinh phải ≥ 1900!");
-                return false;
+            // Cắt chuỗi lấy năm để kiểm tra (yyyy-MM-dd -> Năm nằm ở đầu, từ index 0 đến 4)
+            if (dateStr.length() == 10) {
+                 int year = Integer.parseInt(dateStr.substring(0, 4)); // Lấy 4 ký tự đầu
+                 if (year < 1900) {
+                     JOptionPane.showMessageDialog(viewNV, "Năm sinh phải lớn hơn hoặc bằng 1900!");
+                     return false;
+                 }
             }
-
             return true;
         } catch (ParseException e) {
-            JOptionPane.showMessageDialog(null, "Ngày sinh phải đúng định dạng dd-MM-yyyy!");
+            // Thông báo bắt buộc nhập đúng định dạng
+            JOptionPane.showMessageDialog(viewNV, "Ngày sinh không hợp lệ!\nVui lòng nhập đúng định dạng: yyyy-MM-dd");
             return false;
         }
     }
 
-    // ====================================
-    // VALIDATE EMAIL GMAIL
-    // ====================================
-    private boolean isValidGmail(String email) {
-        return email.matches("^[A-Za-z0-9._%+-]+@gmail\\.com$");
+    // ===== 2. CHECK SĐT (Giữ nguyên) =====
+    private boolean checkSDT(String sdt) {
+        if (!sdt.matches("\\d+")) {
+            JOptionPane.showMessageDialog(viewNV, "Số điện thoại chỉ được chứa ký tự số!");
+            return false;
+        }
+        return true;
     }
 
-    // ====================================
-    // LOAD TABLE
-    // ====================================
-    private void loadTable() {
-        view.model.setRowCount(0);
-        ArrayList<NhanVien> list = dao.getAll();
+    private void initEvents() {
+        // --- SỰ KIỆN THÊM ---
+        viewNV.btnThem.addActionListener(e -> {
+            try {
+                NhanVien nv = viewNV.getFormData();
 
-        for (NhanVien nv : list) {
-            view.model.addRow(new Object[]{
-                nv.getHoTen(),
-                nv.getNgaySinh(),
-                nv.getDiaChi(),
-                nv.getGioiTinh(),
-                nv.getMaNhanVien(),
-                nv.getEmail(),
-                nv.getDiemTongKet()
+                // Validate
+                if (nv.getMaNV().isEmpty() || nv.getHoTen().isEmpty() || nv.getNgaySinh().isEmpty() || nv.getSdt().isEmpty()) {
+                    JOptionPane.showMessageDialog(viewNV, "Vui lòng nhập đầy đủ thông tin!");
+                    return;
+                }
+
+                // Gọi hàm check ngày sinh (yyyy-MM-dd)
+                if (!checkNgaySinh(nv.getNgaySinh())) return;
+                
+                // Gọi hàm check SĐT
+                if (!checkSDT(nv.getSdt())) return;
+
+                // Check trùng mã
+                List<NhanVien> list = dao.getAll();
+                for (NhanVien existing : list) {
+                    if (existing.getMaNV().equalsIgnoreCase(nv.getMaNV())) {
+                        JOptionPane.showMessageDialog(viewNV, "Mã nhân viên đã tồn tại!");
+                        return;
+                    }
+                }
+
+                // Insert thẳng vào DB (vì input đã chuẩn yyyy-MM-dd rồi)
+                if (dao.insert(nv)) {
+                    JOptionPane.showMessageDialog(viewNV, "Thêm thành công!");
+                    loadTable();
+                    viewNV.clearForm();
+                } else {
+                    JOptionPane.showMessageDialog(viewNV, "Thêm thất bại!");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(viewNV, "Lỗi thêm: " + ex.getMessage());
+            }
+        });
+
+        // --- SỰ KIỆN SỬA ---
+        viewNV.btnSua.addActionListener(e -> {
+            try {
+                String maNV_Cu = viewNV.getSelectedMaNV();
+                if (maNV_Cu == null) {
+                    JOptionPane.showMessageDialog(viewNV, "Vui lòng chọn nhân viên cần sửa!");
+                    return;
+                }
+
+                NhanVien nv_Moi = viewNV.getFormData();
+                
+                if (nv_Moi.getMaNV().isEmpty() || nv_Moi.getHoTen().isEmpty()) {
+                    JOptionPane.showMessageDialog(viewNV, "Thông tin chính không được để trống!");
+                    return;
+                }
+
+                if (!checkNgaySinh(nv_Moi.getNgaySinh())) return;
+                if (!checkSDT(nv_Moi.getSdt())) return;
+
+                if (!nv_Moi.getMaNV().equalsIgnoreCase(maNV_Cu)) {
+                    List<NhanVien> list = dao.getAll();
+                    for (NhanVien existing : list) {
+                        if (existing.getMaNV().equalsIgnoreCase(nv_Moi.getMaNV())) {
+                            JOptionPane.showMessageDialog(viewNV, "Mã nhân viên mới đã tồn tại!");
+                            return;
+                        }
+                    }
+                }
+
+                if (dao.update(nv_Moi, maNV_Cu)) {
+                    JOptionPane.showMessageDialog(viewNV, "Cập nhật thành công!");
+                    loadTable();
+                    viewNV.clearForm();
+                } else {
+                    JOptionPane.showMessageDialog(viewNV, "Cập nhật thất bại!");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(viewNV, "Lỗi sửa: " + ex.getMessage());
+            }
+        });
+
+        // --- SỰ KIỆN XÓA (Giữ nguyên) ---
+        viewNV.btnXoa.addActionListener(e -> {
+            try {
+                String maNV = viewNV.getSelectedMaNV();
+                if (maNV == null) {
+                    JOptionPane.showMessageDialog(viewNV, "Vui lòng chọn nhân viên cần xóa!");
+                    return;
+                }
+                int confirm = JOptionPane.showConfirmDialog(viewNV, "Xóa nhân viên: " + maNV + "?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    if (dao.delete(maNV)) {
+                        JOptionPane.showMessageDialog(viewNV, "Xóa thành công!");
+                        loadTable();
+                        viewNV.clearForm();
+                    } else {
+                        JOptionPane.showMessageDialog(viewNV, "Xóa thất bại!");
+                    }
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(viewNV, "Lỗi xóa: " + ex.getMessage());
+            }
+        });
+
+        // --- SỰ KIỆN TÌM KIẾM (Giữ nguyên) ---
+        if (viewNV.btnTim != null) {
+            viewNV.btnTim.addActionListener(e -> {
+                String keyword = viewNV.txtTim.getText().trim().toLowerCase();
+                if (keyword.isEmpty()) {
+                    loadTable();
+                } else {
+                    List<NhanVien> all = dao.getAll();
+                    List<NhanVien> res = all.stream()
+                        .filter(nv -> nv.getMaNV().toLowerCase().contains(keyword))
+                        .collect(java.util.stream.Collectors.toList());
+                    viewNV.showData(res);
+                }
             });
         }
+
+        viewNV.table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                viewNV.fillFormFromTable();
+            }
+        });
     }
 
-    // ====================================
-    // ADD EMPLOYEE
-    // ====================================
-    class AddListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
+    public void loadComboBoxMaNV() {
+        if (viewTK != null) {
             try {
-                // ----------- LẤY DỮ LIỆU -----------
-                String hoTen = view.txtHoTen.getText().trim();
-                String ngaySinh = view.txtNgaySinh.getText().trim();
-                String diaChi = view.txtDiaChi.getText().trim();
-                String gt = view.rdNam.isSelected() ? "Nam" : "Nữ";
-                String maNhanVien = view.txtMaNhanVien.getText().trim();
-                String email = view.txtEmail.getText().trim();
-                String diemTongKetStr = view.txtDiemTongKet.getText().trim();
-
-                // ----------- KIỂM TRA TRỐNG -----------
-                if (hoTen.isEmpty() || ngaySinh.isEmpty() || diaChi.isEmpty()
-                        || maNhanVien.isEmpty() || email.isEmpty() || diemTongKetStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Không được bỏ trống dữ liệu!");
-                    return;
-                }
-
-                // ----------- KIỂM TRA NGÀY SINH -----------
-                if (!isValidDate(ngaySinh)) {
-                    return;
-                }
-
-                // ----------- KIỂM TRA EMAIL -----------
-                if (!isValidGmail(email)) {
-                    JOptionPane.showMessageDialog(null, "Email phải có dạng: example@gmail.com");
-                    return;
-                }
-
-                // ----------- KIỂM TRA ĐIỂM SỐ -----------
-                double diemTongKet;
-                try {
-                    diemTongKet = Double.parseDouble(diemTongKetStr);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Điểm tổng kết phải là số!");
-                    return;
-                }
-
-                // ----------- ĐỐI TƯỢNG NHAN VIEN -----------
-                NhanVien nv = new NhanVien(hoTen, ngaySinh, diaChi, gt, maNhanVien, email, diemTongKet);
-
-                if (dao.insert(nv)) {
-                    JOptionPane.showMessageDialog(null, "Thêm thành công!");
-                    loadTable();
-                    view.resetForm();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Không thể thêm! (Trùng mã nhân viên?)");
-                }
-
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
-            }
-        }
-    }
-
-    // ====================================
-    // EDIT EMPLOYEE
-    // ====================================
-    class EditListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try {
-                String hoTen = view.txtHoTen.getText().trim();
-                String ngaySinh = view.txtNgaySinh.getText().trim();
-                String diaChi = view.txtDiaChi.getText().trim();
-                String gt = view.rdNam.isSelected() ? "Nam" : "Nữ";
-                String maNhanVien = view.txtMaNhanVien.getText().trim();
-                String email = view.txtEmail.getText().trim();
-                String diemTongKetStr = view.txtDiemTongKet.getText().trim();
-
-                if (hoTen.isEmpty() || ngaySinh.isEmpty() || diaChi.isEmpty()
-                        || maNhanVien.isEmpty() || email.isEmpty() || diemTongKetStr.isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Không được bỏ trống dữ liệu!");
-                    return;
-                }
-
-                if (!isValidDate(ngaySinh)) {
-                    return;
-                }
-
-                if (!isValidGmail(email)) {
-                    JOptionPane.showMessageDialog(null, "Email phải có dạng: example@gmail.com");
-                    return;
-                }
-
-                double diemTongKet;
-                try {
-                    diemTongKet = Double.parseDouble(diemTongKetStr);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Điểm tổng kết phải là số!");
-                    return;
-                }
-
-                NhanVien nv = new NhanVien(hoTen, ngaySinh, diaChi, gt, maNhanVien, email, diemTongKet);
-
-                if (dao.update(nv)) {
-                    JOptionPane.showMessageDialog(null, "Sửa thành công!");
-                    loadTable();
-                    view.resetForm();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Không thể sửa!");
-                }
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(null, "Lỗi: " + ex.getMessage());
-            }
-        }
-    }
-
-    // ====================================
-    // DELETE EMPLOYEE
-    // ====================================
-    class DeleteListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            String maNhanVien = view.txtMaNhanVien.getText();
-
-            if (maNhanVien.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Bạn phải nhập mã nhân viên!");
-                return;
-            }
-
-            int confirm = JOptionPane.showConfirmDialog(
-                    null, "Bạn chắc muốn xóa?", "Xác nhận",
-                    JOptionPane.YES_NO_OPTION
-            );
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                if (dao.delete(maNhanVien)) {
-                    JOptionPane.showMessageDialog(null, "Xóa thành công!");
-                    loadTable();
-                    view.resetForm();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Không thể xóa!");
-                }
-            }
-        }
-    }
-
-    // ====================================
-    // CLICK TABLE → LOAD LÊN FORM
-    // ====================================
-    class TableClick implements MouseListener {
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            int row = view.table.getSelectedRow();
-
-            view.txtHoTen.setText(view.model.getValueAt(row, 0).toString());
-            view.txtNgaySinh.setText(view.model.getValueAt(row, 1).toString());
-            view.txtDiaChi.setText(view.model.getValueAt(row, 2).toString());
-
-            String gt = view.model.getValueAt(row, 3).toString();
-            if (gt.equals("Nam")) {
-                view.rdNam.setSelected(true);
-            } else {
-                view.rdNu.setSelected(true);
-            }
-
-            view.txtMaNhanVien.setText(view.model.getValueAt(row, 4).toString());
-            view.txtEmail.setText(view.model.getValueAt(row, 5).toString());
-            view.txtDiemTongKet.setText(view.model.getValueAt(row, 6).toString());
-        }
-
-        public void mousePressed(MouseEvent e) {
-        }
-
-        public void mouseReleased(MouseEvent e) {
-        }
-
-        public void mouseEntered(MouseEvent e) {
-        }
-
-        public void mouseExited(MouseEvent e) {
-        }
-    }
-
-    class SaveListener implements ActionListener {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            try (FileWriter fw = new FileWriter("nhanvien_data.txt")) {
-
-                ArrayList<NhanVien> list = dao.getAll();
-
-                for (NhanVien nv : list) {
-                    fw.write(
-                            nv.getHoTen() + " | "
-                            + nv.getNgaySinh() + " | "
-                            + nv.getDiaChi() + " | "
-                            + nv.getGioiTinh() + " | "
-                            + nv.getMaNhanVien() + " | "
-                            + nv.getEmail() + " | "
-                            + nv.getDiemTongKet() + "\n"
-                    );
-                }
-
-                JOptionPane.showMessageDialog(null, "Đã lưu file nhanvien_data.txt!");
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Lỗi lưu file!");
-            }
+                List<String> listMa = dao.getAllMaNV();
+                viewTK.getCboMaNV().removeAllItems();
+                for (String ma : listMa) viewTK.getCboMaNV().addItem(ma);
+            } catch (Exception e) {}
         }
     }
 }
-

@@ -1,19 +1,17 @@
 package QLNS.view;
 
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
+import QLNS.model.PhongBan;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class FrmPhongBan extends JPanel {
 
-    // ===== FIELD =====
-    public JTextField txtMaPB, txtTenPB, txtTim, txtNgayThanhLap;
-    public JTextArea txtGhiChu;
-    public JButton btnThem, btnLuu, btnXoa, btnTim;
+    public JButton btnThem, btnSua, btnXoa, btnTim, btnLuu;
     public JTable table;
-    public DefaultTableModel model;
+    public JTextField txtTim;
+    private JTextField txtMaPB, txtTenPB, txtNgayThanhLap, txtGhiChu;
 
     public FrmPhongBan() {
         initUI();
@@ -22,133 +20,99 @@ public class FrmPhongBan extends JPanel {
     private void initUI() {
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JLabel lblWelcome = new JLabel("DANH MỤC PHÒNG BAN", SwingConstants.CENTER);
+        lblWelcome.setFont(new Font("Arial", Font.BOLD, 15));
+        lblWelcome.setForeground(new Color(0, 102, 204));
+        lblWelcome.setBorder(BorderFactory.createEmptyBorder(5, 5, 15, 5));
 
-        // ===== PANEL THÔNG TIN =====
-        JPanel pnlInfo = new JPanel(new GridBagLayout());
-        pnlInfo.setBorder(BorderFactory.createTitledBorder("Thông tin phòng ban"));
+        JPanel pnlInput = new JPanel(new GridLayout(4, 2, 6, 10));
+        pnlInput.setBorder(BorderFactory.createTitledBorder("Thông tin phòng ban"));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 10, 5, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        txtMaPB = new JTextField();
+        txtTenPB = new JTextField();
+        txtNgayThanhLap = new JTextField();
+        txtGhiChu = new JTextField();
 
-        // ===== ROW 1 =====
-        gbc.gridx = 0; gbc.gridy = 0;
-        pnlInfo.add(new JLabel("Mã phòng ban:"), gbc);
+        pnlInput.add(new JLabel("Mã phòng ban:")); pnlInput.add(txtMaPB);
+        pnlInput.add(new JLabel("Tên phòng ban:")); pnlInput.add(txtTenPB);
+        pnlInput.add(new JLabel("Ngày thành lập:")); pnlInput.add(txtNgayThanhLap);
+        pnlInput.add(new JLabel("Ghi chú:")); pnlInput.add(txtGhiChu);
 
-        gbc.gridx = 1;
-        txtMaPB = new JTextField(15);
-        pnlInfo.add(txtMaPB, gbc);
+        JPanel pnlBtn = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 15));
+        btnThem = new JButton("Thêm"); btnSua = new JButton("Sửa"); btnXoa = new JButton("Xóa"); btnLuu = new JButton("Lưu");
+        pnlBtn.add(btnThem); pnlBtn.add(btnSua); pnlBtn.add(btnXoa); pnlBtn.add(btnLuu);
 
-        gbc.gridx = 2;
-        pnlInfo.add(new JLabel("Tên phòng ban:"), gbc);
+        JPanel pnlTop = new JPanel(new BorderLayout(5, 5));
+        pnlTop.add(pnlInput, BorderLayout.CENTER); pnlTop.add(pnlBtn, BorderLayout.SOUTH);
+        JPanel pnlNorth = new JPanel(new BorderLayout());
+        pnlNorth.add(lblWelcome, BorderLayout.NORTH); pnlNorth.add(pnlTop, BorderLayout.CENTER);
+        add(pnlNorth, BorderLayout.NORTH);
 
-        gbc.gridx = 3;
-        txtTenPB = new JTextField(15);
-        pnlInfo.add(txtTenPB, gbc);
-
-        // ===== ROW 2 =====
-        gbc.gridx = 0; gbc.gridy = 1;
-        pnlInfo.add(new JLabel("Ngày thành lập:"), gbc);
-
-        gbc.gridx = 1;
-        txtNgayThanhLap = new JTextField(15);
-        pnlInfo.add(txtNgayThanhLap, gbc);
-
-        gbc.gridx = 2;
-        pnlInfo.add(new JLabel("Ghi chú:"), gbc);
-
-        gbc.gridx = 3;
-        txtGhiChu = new JTextArea(3, 15);
-        txtGhiChu.setLineWrap(true);
-        txtGhiChu.setWrapStyleWord(true);
-        pnlInfo.add(new JScrollPane(txtGhiChu), gbc);
-
-        add(pnlInfo, BorderLayout.NORTH);
-
-        // ===== PANEL CENTER =====
         JPanel pnlCenter = new JPanel(new BorderLayout(5, 5));
+        JPanel pnlSearch = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        pnlSearch.add(new JLabel("Tìm:"));
+        txtTim = new JTextField(15); pnlSearch.add(txtTim);
+        btnTim = new JButton("Tìm"); pnlSearch.add(btnTim);
+        pnlCenter.add(pnlSearch, BorderLayout.NORTH);
 
-        // ===== BUTTON + SEARCH =====
-        JPanel pnlAction = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
-
-        btnThem = new JButton("Thêm");
-        btnLuu = new JButton("Sửa");
-        btnXoa = new JButton("Xóa");
-
-        pnlAction.add(btnThem);
-        pnlAction.add(btnLuu);
-        pnlAction.add(btnXoa);
-
-        pnlAction.add(Box.createHorizontalStrut(30));
-        pnlAction.add(new JLabel("Tìm:"));
-
-        txtTim = new JTextField(15);
-        pnlAction.add(txtTim);
-
-        btnTim = new JButton("Tìm");
-        pnlAction.add(btnTim);
-
-        pnlCenter.add(pnlAction, BorderLayout.NORTH);
-
-        // ===== TABLE =====
-        String[] columnNames = {
-            "Mã PB", "Tên phòng ban", "Ngày thành lập", "Ghi chú"
-        };
-        
-        model = new DefaultTableModel(columnNames, 0);
-        table = new JTable(model);
-        
+        table = new JTable();
+        table.setModel(new DefaultTableModel(new Object[][]{}, new String[]{"Mã PB", "Tên PB", "Ngày TL", "Ghi chú"}));
         JScrollPane scroll = new JScrollPane(table);
         scroll.setBorder(BorderFactory.createTitledBorder("Danh sách phòng ban"));
-
         pnlCenter.add(scroll, BorderLayout.CENTER);
-
         add(pnlCenter, BorderLayout.CENTER);
-
-        enableForm(false);
     }
 
-    // ===== FORM UTILS =====
-    public void enableForm(boolean b) {
-        txtMaPB.setEnabled(b);
-        txtTenPB.setEnabled(b);
-        txtNgayThanhLap.setEnabled(b);
-        txtGhiChu.setEnabled(b);
+    public void showData(List<PhongBan> list) {
+        DefaultTableModel model = new DefaultTableModel(
+                new String[]{"Mã PB", "Tên phòng ban", "Ngày thành lập", "Ghi chú"}, 0
+        );
+        for (PhongBan pb : list) {
+            model.addRow(new Object[]{
+                    pb.getMaPB(), pb.getTenPB(), pb.getNgayThanhLap(), pb.getGhiChu()
+            });
+        }
+        table.setModel(model);
     }
 
+    public PhongBan getFormData() {
+        return new PhongBan(
+                txtMaPB.getText().trim(),
+                txtTenPB.getText().trim(),
+                txtNgayThanhLap.getText().trim(),
+                txtGhiChu.getText().trim()
+        );
+    }
+
+    // --- SỬA Ở ĐÂY: KHÓA MÃ KHI CLICK BẢNG ---
+    public void fillFormFromTable() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            txtMaPB.setText(table.getValueAt(row, 0).toString());
+            txtTenPB.setText(table.getValueAt(row, 1).toString());
+            txtNgayThanhLap.setText(table.getValueAt(row, 2).toString());
+            Object ghiChu = table.getValueAt(row, 3);
+            txtGhiChu.setText(ghiChu != null ? ghiChu.toString() : "");
+
+            // ==> KHÓA MÃ
+            txtMaPB.setEnabled(false);
+        }
+    }
+
+    public String getSelectedMaPB() {
+        int row = table.getSelectedRow();
+        return row < 0 ? null : table.getValueAt(row, 0).toString();
+    }
+
+    // --- SỬA Ở ĐÂY: MỞ KHÓA MÃ KHI CLEAR FORM ---
     public void clearForm() {
         txtMaPB.setText("");
         txtTenPB.setText("");
         txtNgayThanhLap.setText("");
         txtGhiChu.setText("");
-    }
+        table.clearSelection();
 
-    public String getKeyword() {
-        return txtTim.getText().trim();
-    }
-
-    // ===== GETTER =====
-    public JTable getTable() { return table; }
-    public JTextField getTxtMaPB() { return txtMaPB; }
-    public JTextField getTxtTenPB() { return txtTenPB; }
-    public JTextField getTxtNgayThanhLap() { return txtNgayThanhLap; }
-    public JTextArea getTxtGhiChu() { return txtGhiChu; }
-    
-    // ===== NEW METHODS FOR MVC PATTERN =====
-    public void addAddListener(ActionListener listener) {
-        btnThem.addActionListener(listener);
-    }
-    
-    public void addEditListener(ActionListener listener) {
-        btnLuu.addActionListener(listener);
-    }
-    
-    public void addDeleteListener(ActionListener listener) {
-        btnXoa.addActionListener(listener);
-    }
-    
-    public void addTableClickListener(MouseListener listener) {
-        table.addMouseListener(listener);
+        // ==> MỞ KHÓA MÃ
+        txtMaPB.setEnabled(true);
     }
 }
-

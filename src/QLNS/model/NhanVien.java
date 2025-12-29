@@ -1,28 +1,72 @@
 package QLNS.model;
 
-public class NhanVien extends Person {
+public class NhanVien {
 
-    private String maNhanVien;
-    private String email;
-    private double diemTongKet;
+    private String maNV;
+    private String hoTen;
+    private String ngaySinh; // Để đơn giản tôi để String, trong thực tế nên dùng Date
+    private String diaChi;
+    private String gioiTinh;
+    private String sdt;
 
-    public NhanVien(String HoTen, String NgaySinh, String DiaChi,
-            String GioiTinh, String maNhanVien, String email, double diemTongKet) {
-        super(HoTen, NgaySinh, DiaChi, GioiTinh);
-        this.maNhanVien = maNhanVien;
-        this.email = email;
-        this.diemTongKet = diemTongKet;
+    public NhanVien() {
     }
 
-    public String getMaNhanVien() {
-        return maNhanVien;
+    public NhanVien(String maNV, String hoTen, String ngaySinh, String diaChi, String gioiTinh, String sdt) {
+        this.maNV = maNV;
+        this.hoTen = hoTen;
+        this.ngaySinh = ngaySinh;
+        this.diaChi = diaChi;
+        this.gioiTinh = gioiTinh;
+        this.sdt = sdt;
     }
 
-    public String getEmail() {
-        return email;
+    // Getters and Setters
+    public String getMaNV() {
+        return maNV;
     }
 
-    public double getDiemTongKet() {
-        return diemTongKet;
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
+    }
+
+    public String getHoTen() {
+        return hoTen;
+    }
+
+    public void setHoTen(String hoTen) {
+        this.hoTen = hoTen;
+    }
+
+    public String getNgaySinh() {
+        return ngaySinh;
+    }
+
+    public void setNgaySinh(String ngaySinh) {
+        this.ngaySinh = ngaySinh;
+    }
+
+    public String getDiaChi() {
+        return diaChi;
+    }
+
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
+    }
+
+    public String getGioiTinh() {
+        return gioiTinh;
+    }
+
+    public void setGioiTinh(String gioiTinh) {
+        this.gioiTinh = gioiTinh;
+    }
+
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
     }
 }

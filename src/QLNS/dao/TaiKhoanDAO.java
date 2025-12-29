@@ -11,36 +11,13 @@ import java.util.List;
 
 public class TaiKhoanDAO {
 
-    /* ================= CHECK LOGIN (NEW - FOR QUANLYNHSU PATTERN) ================= */
-    public boolean checkLogin(String tenTK, String matKhau) {
-        String sql = "SELECT COUNT(*) FROM TaiKhoan WHERE TenTaiKhoan=? AND MatKhau=?";
-        
-        try (
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
-            ps.setString(1, tenTK);
-            ps.setString(2, matKhau);
-
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0; // Return true if count > 0
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-    
     /* ================= LOGIN (GIỮ NGUYÊN) ================= */
     public TaiKhoan login(String tenTK, String matKhau) {
         String sql = "SELECT MaNhanVien, LoaiTaiKhoan "
-                   + "FROM TaiKhoan WHERE TenTaiKhoan=? AND MatKhau=?";
+                + "FROM TaiKhoan WHERE TenTaiKhoan=? AND MatKhau=?";
 
         try (
-            Connection conn = DBConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)
-        ) {
+                Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tenTK);
             ps.setString(2, matKhau);
 
@@ -63,10 +40,7 @@ public class TaiKhoanDAO {
         String sql = "SELECT * FROM TaiKhoan";
 
         try (
-            Connection con = DBConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()
-        ) {
+                Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 TaiKhoan tk = new TaiKhoan();
                 tk.setId(rs.getInt("ID"));
@@ -85,11 +59,9 @@ public class TaiKhoanDAO {
     /* ================= THÊM TÀI KHOẢN ================= */
     public boolean insert(TaiKhoan tk) {
         String sql = "INSERT INTO TaiKhoan(TenTaiKhoan, MatKhau, LoaiTaiKhoan, MaNhanVien) "
-                   + "VALUES (?,?,?,?)";
+                + "VALUES (?,?,?,?)";
         try (
-            Connection con = DBConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
-        ) {
+                Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, tk.getTenTaiKhoan());
             ps.setString(2, tk.getMatKhau());
             ps.setString(3, tk.getLoaiTaiKhoan());
@@ -102,16 +74,27 @@ public class TaiKhoanDAO {
     }
 
     /* ================= CẬP NHẬT TÀI KHOẢN ================= */
-    public boolean update(TaiKhoan tk) {
-        String sql = "UPDATE TaiKhoan SET MatKhau=?, LoaiTaiKhoan=?, MaNhanVien=? WHERE TenTaiKhoan=?";
+    public boolean update(TaiKhoan tk, String tenTaiKhoanCu) {
+        // Câu SQL: Set tên MỚI cho dòng có tên CŨ
+        String sql = "UPDATE TaiKhoan SET TenTaiKhoan=?, MatKhau=?, LoaiTaiKhoan=?, MaNhanVien=? WHERE TenTaiKhoan=?";
+
         try (
-            Connection con = DBConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
-        ) {
-            ps.setString(1, tk.getMatKhau());
-            ps.setString(2, tk.getLoaiTaiKhoan());
-            ps.setString(3, tk.getMaNhanVien());
-            ps.setString(4, tk.getTenTaiKhoan());
+                Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            // 1. Tên tài khoản MỚI (lấy từ object tk do người dùng nhập trên form)
+            ps.setString(1, tk.getTenTaiKhoan());
+
+            // 2. Mật khẩu
+            ps.setString(2, tk.getMatKhau());
+
+            // 3. Loại tài khoản
+            ps.setString(3, tk.getLoaiTaiKhoan());
+
+            // 4. Mã nhân viên
+            ps.setString(4, tk.getMaNhanVien());
+
+            // 5. Tên tài khoản CŨ (để tìm ra dòng cần sửa trong DB)
+            ps.setString(5, tenTaiKhoanCu);
+
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,9 +106,7 @@ public class TaiKhoanDAO {
     public boolean delete(String tenTK) {
         String sql = "DELETE FROM TaiKhoan WHERE TenTaiKhoan=?";
         try (
-            Connection con = DBConnection.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)
-        ) {
+                Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, tenTK);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
@@ -134,4 +115,3 @@ public class TaiKhoanDAO {
         return false;
     }
 }
-

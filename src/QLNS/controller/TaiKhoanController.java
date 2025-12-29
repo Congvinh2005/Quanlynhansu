@@ -3,40 +3,31 @@ package QLNS.controller;
 import QLNS.dao.TaiKhoanDAO;
 import QLNS.model.TaiKhoan;
 import QLNS.view.FrmQLTK;
-import java.util.List;
-import javax.swing.JOptionPane;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.List;
+import java.util.stream.Collectors; // Cần thêm thư viện này để lọc tìm kiếm
+import javax.swing.JOptionPane;
 
 public class TaiKhoanController {
 
     private FrmQLTK view;
     private TaiKhoanDAO dao;
 
-    public TaiKhoanController() {
-        try {
-            dao = new TaiKhoanDAO();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Không kết nối được Database!");
-        }
-
-        view = new FrmQLTK();
-        loadTable();
-        initEventHandlers();
-    }
-
     public TaiKhoanController(FrmQLTK view) {
+        this.view = view;
+
         try {
             dao = new TaiKhoanDAO();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Không kết nối được Database!");
+            JOptionPane.showMessageDialog(view, "Không kết nối được Database: " + e.getMessage());
         }
-        
-        this.view = view;
+
+        new LoaiTaiKhoanController(view);
+        new NhanVienController(view);
+
         loadTable();
-        initEventHandlers();
-        initEventHandlersForPanel();
+        initEvents();
     }
 
     private void loadTable() {
@@ -44,80 +35,118 @@ public class TaiKhoanController {
         view.showData(list);
     }
 
-    private void initEventHandlers() {
-        view.addAddListener(new AddListener());
-        view.addEditListener(new EditListener());
-        view.addDeleteListener(new DeleteListener());
-        view.addTableClickListener(new TableClickListener());
-    }
-
-    private void initEventHandlersForPanel() {
-        // Only if this is called from the panel context
-    }
-
-    // Add button listener class
-    class AddListener implements ActionListener {
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
-            view.enableForm(true);
-        }
-    }
-
-    // Edit button listener class
-    class EditListener implements ActionListener {
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
+    private void initEvents() {
+        // ================== 1. SỰ KIỆN THÊM (CÓ CHECK RỖNG + CHECK TRÙNG) ==================
+        view.btnThem.addActionListener(e -> {
             try {
                 TaiKhoan tk = view.getFormData();
-                String tenTaiKhoan = view.getSelectedTenTK();
-                
-                if (tenTaiKhoan == null) {
+
+                // --- BƯỚC 1: CHECK RỖNG (MỚI THÊM) ---
+                if (tk.getTenTaiKhoan().trim().isEmpty()
+                        || tk.getMatKhau().trim().isEmpty()
+                        || tk.getLoaiTaiKhoan().trim().isEmpty()
+                        || tk.getMaNhanVien().trim().isEmpty()) {
+
+                    JOptionPane.showMessageDialog(view, "Vui lòng nhập đầy đủ thông tin!");
+                    return; // Dừng lại ngay, không làm gì tiếp theo
+                }
+                // ------------------------------------
+
+                // --- BƯỚC 2: CHECK TRÙNG ---
+                List<TaiKhoan> currentList = dao.getAll();
+                boolean checkTrung = false;
+                for (TaiKhoan existingTK : currentList) {
+                    if (existingTK.getTenTaiKhoan().equalsIgnoreCase(tk.getTenTaiKhoan())) {
+                        checkTrung = true;
+                        break;
+                    }
+                }
+
+                if (checkTrung) {
+                    JOptionPane.showMessageDialog(view, "Tên tài khoản '" + tk.getTenTaiKhoan() + "' đã tồn tại! Vui lòng chọn tên khác.");
+                    return;
+                }
+                // ---------------------------
+
+                // --- BƯỚC 3: THÊM VÀO DATABASE ---
+                if (dao.insert(tk)) {
+                    JOptionPane.showMessageDialog(view, "Thêm thành công");
+                    loadTable();
+                    view.clearForm();
+                } else {
+                    JOptionPane.showMessageDialog(view, "Thêm thất bại");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(view, "Lỗi thêm: " + ex.getMessage());
+            }
+        });
+
+        // ================== 2. SỰ KIỆN SỬA (CÓ CHECK RỖNG) ==================
+        // ... Trong initEvents() ...
+        view.btnSua.addActionListener(e -> {
+            try {
+                // 1. Lấy tên tài khoản CŨ (đang chọn trên bảng) TRƯỚC khi lấy dữ liệu form
+                String tenTK_Cu = view.getSelectedTenTK();
+
+                if (tenTK_Cu == null) {
                     JOptionPane.showMessageDialog(view, "Vui lòng chọn tài khoản để sửa!");
                     return;
                 }
-                
-                // We need to set the tenTaiKhoan in the object for update
-                tk.setTenTaiKhoan(tenTaiKhoan);
-                
-                if (dao.update(tk)) {
+
+                // 2. Lấy dữ liệu MỚI từ form (người dùng đã sửa tên trên textfield)
+                TaiKhoan tk_Moi = view.getFormData();
+
+                // --- Check rỗng nếu cần thiết ---
+                if (tk_Moi.getTenTaiKhoan().trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(view, "Tên tài khoản không được để trống!");
+                    return;
+                }
+
+                // 3. Check trùng tên MỚI (nếu người dùng đổi tên, phải xem tên mới đã có chưa)
+                // Chỉ check nếu tên MỚI khác tên CŨ
+                if (!tk_Moi.getTenTaiKhoan().equalsIgnoreCase(tenTK_Cu)) {
+                    List<TaiKhoan> list = dao.getAll();
+                    for (TaiKhoan t : list) {
+                        if (t.getTenTaiKhoan().equalsIgnoreCase(tk_Moi.getTenTaiKhoan())) {
+                            JOptionPane.showMessageDialog(view, "Tên tài khoản mới đã tồn tại!");
+                            return;
+                        }
+                    }
+                }
+
+                // 4. GỌI HÀM UPDATE VỚI 2 THAM SỐ
+                // Truyền vào: (Thông tin mới, Tên cũ để tìm dòng cần sửa)
+                if (dao.update(tk_Moi, tenTK_Cu)) {
                     JOptionPane.showMessageDialog(view, "Cập nhật thành công");
                     loadTable();
                     view.clearForm();
-                    view.enableForm(false);
                 } else {
                     JOptionPane.showMessageDialog(view, "Cập nhật thất bại");
                 }
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(view, "Lỗi cập nhật: " + ex.getMessage());
             }
-        }
-    }
+        });
 
-    // Delete button listener class
-    class DeleteListener implements ActionListener {
-        @Override
-        public void actionPerformed(java.awt.event.ActionEvent e) {
+        // ================== 3. SỰ KIỆN XÓA ==================
+        view.btnXoa.addActionListener(e -> {
             try {
-                String tenTaiKhoan = view.getSelectedTenTK();
-                
-                if (tenTaiKhoan == null) {
+                String tenTK = view.getSelectedTenTK();
+                if (tenTK == null) {
                     JOptionPane.showMessageDialog(view, "Vui lòng chọn tài khoản để xóa!");
                     return;
                 }
-                
-                int confirm = JOptionPane.showConfirmDialog(
-                    view, 
-                    "Bạn có chắc chắn muốn xóa tài khoản " + tenTaiKhoan + "?", 
-                    "Xác nhận xóa", 
-                    JOptionPane.YES_NO_OPTION
-                );
-                
+
+                int confirm = JOptionPane.showConfirmDialog(view,
+                        "Xóa tài khoản: " + tenTK + "?",
+                        "Xác nhận", JOptionPane.YES_NO_OPTION);
+
                 if (confirm == JOptionPane.YES_OPTION) {
-                    if (dao.delete(tenTaiKhoan)) {
+                    if (dao.delete(tenTK)) {
                         JOptionPane.showMessageDialog(view, "Xóa thành công");
                         loadTable();
                         view.clearForm();
-                        view.enableForm(false);
                     } else {
                         JOptionPane.showMessageDialog(view, "Xóa thất bại");
                     }
@@ -125,27 +154,31 @@ public class TaiKhoanController {
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(view, "Lỗi xóa: " + ex.getMessage());
             }
+        });
+
+        // ================== 4. SỰ KIỆN CLICK BẢNG ==================
+        view.table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                view.fillFormFromTable();
+            }
+        });
+
+        // ================== 5. SỰ KIỆN TÌM KIẾM ==================
+        if (view.btnTim != null) {
+            view.btnTim.addActionListener(e -> {
+                String keyword = view.txtTim.getText().trim().toLowerCase();
+
+                if (keyword.isEmpty()) {
+                    loadTable();
+                } else {
+                    List<TaiKhoan> allList = dao.getAll();
+                    List<TaiKhoan> searchResult = allList.stream()
+                            .filter(tk -> tk.getTenTaiKhoan().toLowerCase().contains(keyword))
+                            .collect(Collectors.toList());
+                    view.showData(searchResult);
+                }
+            });
         }
-    }
-
-    // Table click listener class
-    class TableClickListener implements MouseListener {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            view.fillFormFromTable();
-        }
-
-        @Override
-        public void mousePressed(MouseEvent e) {}
-
-        @Override
-        public void mouseReleased(MouseEvent e) {}
-
-        @Override
-        public void mouseEntered(MouseEvent e) {}
-
-        @Override
-        public void mouseExited(MouseEvent e) {}
     }
 }
-
