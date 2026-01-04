@@ -59,7 +59,7 @@ public class TaiKhoanController {
 
         return new TaiKhoan(
                 view.getTxtTenTK().getText().trim(),
-                new String(view.getTxtMatKhau().getPassword()),
+                new String(view.getTxtMatKhau().getText()),
                 loaiTK,
                 maNV
         );

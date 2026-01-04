@@ -13,10 +13,11 @@ public class LoginController {
     private FrmLogin view;
     private TaiKhoanDAO dao;
 
-    public LoginController(FrmLogin view) {
-        this.view = view;
+    public LoginController() {
+        this.view = new FrmLogin();
         this.dao = new TaiKhoanDAO();
         init();
+        this.view.setVisible(true);
     }
 
     private void init() {

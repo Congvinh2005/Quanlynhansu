@@ -21,7 +21,6 @@ public class PhongBanController {
 
     public PhongBanController(FrmPhongBan view) {
         this.view = view;
-        // Khởi tạo DAO
         try {
             this.dao = new PhongBanDAO();
         } catch (Exception e) {

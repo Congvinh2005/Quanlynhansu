@@ -9,7 +9,7 @@ public class FrmQLTK extends JPanel {
     private JButton btnThem, btnSua, btnXoa, btnTim, btnXuat, btnReset;
     private JTable table;
     private JTextField txtTenTK, txtTim;
-    private JPasswordField txtMatKhau;
+    private JTextField txtMatKhau;
     private JComboBox<String> cboLoaiTK, cboMaNV;
 
     public FrmQLTK() {
@@ -31,7 +31,7 @@ public class FrmQLTK extends JPanel {
         txtTenTK = new JTextField();
         txtTenTK.setDisabledTextColor(Color.BLACK);
 
-        txtMatKhau = new JPasswordField();
+        txtMatKhau = new JTextField();
         cboLoaiTK = new JComboBox<>();
         cboMaNV = new JComboBox<>();
 
@@ -97,7 +97,7 @@ public class FrmQLTK extends JPanel {
     public JTextField getTxtTim() { return txtTim; }
 
     public JTextField getTxtTenTK() { return txtTenTK; }
-    public JPasswordField getTxtMatKhau() { return txtMatKhau; }
+    public JTextField getTxtMatKhau() { return txtMatKhau; }
     public JComboBox<String> getCboLoaiTK() { return cboLoaiTK; }
     public JComboBox<String> getCboMaNV() { return cboMaNV; }
 }

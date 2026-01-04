@@ -34,19 +34,16 @@ public class LoginView extends JFrame {
         lblTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
         container.add(lblTitle);
 
-        // =================== INPUTS =====================
         JPanel pnlInput = new JPanel();
         pnlInput.setPreferredSize(new Dimension(350, 110));
         pnlInput.setLayout(new GridLayout(2, 1, 10, 10));
         pnlInput.setBackground(Color.WHITE);
 
-        // Username
         tf_username = new JTextField();
         makeRounded(tf_username);
         addPlaceholder(tf_username, "Tên đăng nhập");
         pnlInput.add(tf_username);
 
-        // Password
         tf_password = new JPasswordField();
         makeRounded(tf_password);
         addPlaceholder(tf_password, "Mật khẩu");
@@ -54,7 +51,6 @@ public class LoginView extends JFrame {
 
         container.add(pnlInput);
 
-        // =================== LOGIN BUTTON =====================
         btn_login = new JPanel();
         btn_login.setPreferredSize(new Dimension(330, 45));
         btn_login.setBackground(Color.BLACK);

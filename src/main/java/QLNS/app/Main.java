@@ -7,8 +7,6 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        FrmLogin view = new FrmLogin();
-        new LoginController(view);
-        view.setVisible(true);
+        new LoginController();
     }
 }

@@ -33,9 +33,7 @@ public class MainController {
     private void initEvents() {
         view.getMniDangXuat().addActionListener(e -> {
             view.dispose();
-            FrmLogin loginView = new FrmLogin();
-            new LoginController(loginView);
-            loginView.setVisible(true);
+            new LoginController();
         });
 
         view.getmniQuanLyTaiKhoan().addActionListener(e -> {
