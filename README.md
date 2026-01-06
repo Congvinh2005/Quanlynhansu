@@ -112,6 +112,8 @@ Dự án được tổ chức theo mô hình MVC với các thành phần chính
 
 10. **Báo cáo**
     - Xuất báo cáo lương, thống kê nhân sự
+    - 
+## Tất cả đều có thể xuất excel
 
 ## Yêu Cầu Hệ Thống
 
@@ -124,7 +126,7 @@ Dự án được tổ chức theo mô hình MVC với các thành phần chính
 ### 1. Cài đặt môi trường
 
 - Cài đặt Java 17 hoặc mới hơn
-- Cài đặt MySQL Server
+- Cài đặt MySQL Server ( PHPadmin)
 - Cài đặt Maven (nếu chưa có)
 
 ### 2. Cài đặt cơ sở dữ liệu
@@ -217,5 +219,5 @@ QLNS_Project/
 ## Tác Giả
 
 **Thành Vinh Quang**  
-Email: [Điền email nếu có]  
-GitHub: [Điền tài khoản GitHub nếu có]
+Email: [daovinhgm2005@gmail.com]  
+GitHub: [https://github.com/Congvinh2005]
