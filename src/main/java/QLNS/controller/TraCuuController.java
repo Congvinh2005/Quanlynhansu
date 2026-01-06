@@ -3,6 +3,8 @@ package QLNS.controller;
 import QLNS.dao.TraCuuDAO;
 import QLNS.util.Session;
 import QLNS.view.FrmTraCuu;
+
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +19,7 @@ public class TraCuuController {
         this.view = view;
         this.dao = new TraCuuDAO();
 
+        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
         checkRole();
         initEvents();
     }
@@ -55,6 +58,23 @@ public class TraCuuController {
     private void loadTable(String keyword) {
         List<Object[]> list = dao.search(keyword);
         showData(list);
+    }
+
+    private void lockTableEditing() {
+        JTable table = view.getTable();
+
+        // Cách 1: Không cho chỉnh sửa tất cả các ô
+        table.setDefaultEditor(Object.class, null);
+
+        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"Mã NV", "Họ tên", "Ngày sinh", "Địa chỉ", "Giới tính", "SĐT", "Phòng ban", "Chức vụ", "Lương CB", "Phụ cấp", "Thưởng", "Thực lĩnh"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // khóa toàn bộ ô
+            }
+        };
+        table.setModel(model);
     }
 
     private void fillFormFromTable() {

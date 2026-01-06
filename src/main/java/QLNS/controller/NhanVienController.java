@@ -31,6 +31,7 @@ public class NhanVienController {
             return;
         }
 
+        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
         checkRole();
         initEvents();
     }
@@ -67,9 +68,8 @@ public class NhanVienController {
     }
 
     private void showData(List<NhanVien> list) {
-        String[] columns = {"Mã NV", "Họ tên", "Ngày sinh", "Giới tính", "SĐT", "Địa chỉ"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0);
-
+        DefaultTableModel model = (DefaultTableModel) viewNV.getTable().getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
         for (NhanVien nv : list) {
             model.addRow(new Object[]{
                     nv.getMaNV(),
@@ -80,7 +80,6 @@ public class NhanVienController {
                     nv.getDiaChi()
             });
         }
-        viewNV.getTable().setModel(model);
     }
 
     private NhanVien getFormData() {
@@ -323,5 +322,22 @@ public class NhanVienController {
                 for (String ma : listMa) viewTK.getCboMaNV().addItem(ma);
             } catch (Exception e) {}
         }
+    }
+
+    private void lockTableEditing() {
+        JTable table = viewNV.getTable();
+
+        // Cách 1: Không cho chỉnh sửa tất cả các ô
+        table.setDefaultEditor(Object.class, null);
+
+        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"Mã NV", "Họ tên", "Ngày sinh", "Giới tính", "SĐT", "Địa chỉ"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // khóa toàn bộ ô
+            }
+        };
+        table.setModel(model);
     }
 }

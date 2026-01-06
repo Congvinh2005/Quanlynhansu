@@ -22,6 +22,7 @@ public class BaoCaoController {
         this.view = view;
         this.dao = new BaoCaoDAO();
 
+        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
         loadTable("");
         initEvents();
     }
@@ -29,10 +30,27 @@ public class BaoCaoController {
     private void loadTable(String keyword) {
         List<Object[]> list = dao.search(keyword);
         DefaultTableModel model = (DefaultTableModel) view.getTable().getModel();
-        model.setRowCount(0);
+        model.setRowCount(0); // Xóa dữ liệu cũ
         for (Object[] row : list) {
             model.addRow(row);
         }
+    }
+
+    private void lockTableEditing() {
+        JTable table = view.getTable();
+
+        // Cách 1: Không cho chỉnh sửa tất cả các ô
+        table.setDefaultEditor(Object.class, null);
+
+        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"Mã NV", "Họ tên", "Ngày sinh", "Địa chỉ", "Giới tính", "SĐT", "Phòng ban", "Chức vụ", "Lương CB", "Phụ cấp", "Thưởng", "Thực lĩnh"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // khóa toàn bộ ô
+            }
+        };
+        table.setModel(model);
     }
 
     private void fillFormFromTable() {

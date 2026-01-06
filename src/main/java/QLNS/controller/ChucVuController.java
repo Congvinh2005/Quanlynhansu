@@ -25,6 +25,7 @@ public class ChucVuController {
             return;
         }
 
+        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
         loadTable();
         initEvents();
     }
@@ -85,6 +86,23 @@ public class ChucVuController {
 
     private void loadTable() {
         showData(dao.getAll());
+    }
+
+    private void lockTableEditing() {
+        JTable table = view.getTable();
+
+        // Cách 1: Không cho chỉnh sửa tất cả các ô
+        table.setDefaultEditor(Object.class, null);
+
+        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"Mã CV", "Tên CV", "Mô tả"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // khóa toàn bộ ô
+            }
+        };
+        table.setModel(model);
     }
 
     private void initEvents() {
