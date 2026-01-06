@@ -14,52 +14,52 @@ Dự án được tổ chức theo mô hình MVC với các thành phần chính
 ### Model (Mô hình)
 - Chứa các lớp đại diện cho dữ liệu và logic nghiệp vụ
 - Các lớp model bao gồm:
-  - `NhanVien.java` - Thông tin nhân viên
-  - `PhongBan.java` - Thông tin phòng ban
-  - `ChucVu.java` - Thông tin chức vụ
-  - `Luong.java` - Thông tin lương
-  - `PhuCap.java` - Thông tin phụ cấp
-  - `Thuong.java` - Thông tin thưởng
-  - `TaiKhoan.java` - Thông tin tài khoản người dùng
+    - `NhanVien.java` - Thông tin nhân viên
+    - `PhongBan.java` - Thông tin phòng ban
+    - `ChucVu.java` - Thông tin chức vụ
+    - `Luong.java` - Thông tin lương
+    - `PhuCap.java` - Thông tin phụ cấp
+    - `Thuong.java` - Thông tin thưởng
+    - `TaiKhoan.java` - Thông tin tài khoản người dùng
 
 ### View (Giao diện)
 - Chứa các lớp giao diện người dùng sử dụng Java Swing
 - Các form giao diện bao gồm:
-  - `FrmLogin.java` - Giao diện đăng nhập
-  - `FrmMain.java` - Giao diện chính
-  - `FrmNhanVien.java` - Quản lý nhân viên
-  - `FrmPhongBan.java` - Quản lý phòng ban
-  - `FrmChucVu.java` - Quản lý chức vụ
-  - `FrmLuong.java` - Quản lý lương
-  - `FrmPhuCap.java` - Quản lý phụ cấp
-  - `FrmThuong.java` - Quản lý thưởng
-  - `FrmQLTK.java` - Quản lý tài khoản
-  - Và các giao diện khác...
+    - `FrmLogin.java` - Giao diện đăng nhập
+    - `FrmMain.java` - Giao diện chính
+    - `FrmNhanVien.java` - Quản lý nhân viên
+    - `FrmPhongBan.java` - Quản lý phòng ban
+    - `FrmChucVu.java` - Quản lý chức vụ
+    - `FrmLuong.java` - Quản lý lương
+    - `FrmPhuCap.java` - Quản lý phụ cấp
+    - `FrmThuong.java` - Quản lý thưởng
+    - `FrmQLTK.java` - Quản lý tài khoản
+    - Và các giao diện khác...
 
 ### Controller (Điều khiển)
 - Chứa các lớp điều khiển xử lý logic nghiệp vụ và tương tác giữa Model và View
 - Các controller bao gồm:
-  - `LoginController.java` - Xử lý đăng nhập
-  - `NhanVienController.java` - Xử lý nghiệp vụ nhân viên
-  - `PhongBanController.java` - Xử lý nghiệp vụ phòng ban
-  - `ChucVuController.java` - Xử lý nghiệp vụ chức vụ
-  - `LuongController.java` - Xử lý nghiệp vụ lương
-  - `PhuCapController.java` - Xử lý nghiệp vụ phụ cấp
-  - `ThuongController.java` - Xử lý nghiệp vụ thưởng
-  - `TaiKhoanController.java` - Xử lý nghiệp vụ tài khoản
-  - Và các controller khác...
+    - `LoginController.java` - Xử lý đăng nhập
+    - `NhanVienController.java` - Xử lý nghiệp vụ nhân viên
+    - `PhongBanController.java` - Xử lý nghiệp vụ phòng ban
+    - `ChucVuController.java` - Xử lý nghiệp vụ chức vụ
+    - `LuongController.java` - Xử lý nghiệp vụ lương
+    - `PhuCapController.java` - Xử lý nghiệp vụ phụ cấp
+    - `ThuongController.java` - Xử lý nghiệp vụ thưởng
+    - `TaiKhoanController.java` - Xử lý nghiệp vụ tài khoản
+    - Và các controller khác...
 
 ### DAO (Data Access Object)
 - Chứa các lớp truy cập dữ liệu để tương tác với cơ sở dữ liệu
 - Các lớp DAO bao gồm:
-  - `NhanVienDAO.java` - Truy cập dữ liệu nhân viên
-  - `PhongBanDAO.java` - Truy cập dữ liệu phòng ban
-  - `ChucVuDAO.java` - Truy cập dữ liệu chức vụ
-  - `LuongDAO.java` - Truy cập dữ liệu lương
-  - `PhuCapDAO.java` - Truy cập dữ liệu phụ cấp
-  - `ThuongDAO.java` - Truy cập dữ liệu thưởng
-  - `TaiKhoanDAO.java` - Truy cập dữ liệu tài khoản
-  - Và các DAO khác...
+    - `NhanVienDAO.java` - Truy cập dữ liệu nhân viên
+    - `PhongBanDAO.java` - Truy cập dữ liệu phòng ban
+    - `ChucVuDAO.java` - Truy cập dữ liệu chức vụ
+    - `LuongDAO.java` - Truy cập dữ liệu lương
+    - `PhuCapDAO.java` - Truy cập dữ liệu phụ cấp
+    - `ThuongDAO.java` - Truy cập dữ liệu thưởng
+    - `TaiKhoanDAO.java` - Truy cập dữ liệu tài khoản
+    - Và các DAO khác...
 
 ### Utility
 - `DBConnection.java` - Quản lý kết nối cơ sở dữ liệu
@@ -81,38 +81,38 @@ Dự án được tổ chức theo mô hình MVC với các thành phần chính
 ## Tính Năng Chính
 
 1. **Đăng nhập hệ thống**
-   - Hỗ trợ phân quyền quản trị viên và nhân viên
-   - Xác thực tài khoản người dùng
+    - Hỗ trợ phân quyền quản trị viên và nhân viên
+    - Xác thực tài khoản người dùng
 
 2. **Quản lý nhân viên**
-   - Thêm, sửa, xóa thông tin nhân viên
-   - Phân công nhân viên vào phòng ban và chức vụ
+    - Thêm, sửa, xóa thông tin nhân viên
+    - Phân công nhân viên vào phòng ban và chức vụ
 
 3. **Quản lý phòng ban**
-   - Thêm, sửa, xóa thông tin phòng ban
+    - Thêm, sửa, xóa thông tin phòng ban
 
 4. **Quản lý chức vụ**
-   - Thêm, sửa, xóa thông tin chức vụ
+    - Thêm, sửa, xóa thông tin chức vụ
 
 5. **Quản lý lương**
-   - Thêm, sửa, xóa thông tin lương cơ bản
+    - Thêm, sửa, xóa thông tin lương cơ bản
 
 6. **Quản lý phụ cấp**
-   - Thêm, sửa, xóa thông tin phụ cấp
+    - Thêm, sửa, xóa thông tin phụ cấp
 
 7. **Quản lý thưởng**
-   - Thêm, sửa, xóa thông tin thưởng
+    - Thêm, sửa, xóa thông tin thưởng
 
 8. **Quản lý tài khoản**
-   - Tạo, chỉnh sửa tài khoản người dùng
-   - Phân quyền tài khoản
+    - Tạo, chỉnh sửa tài khoản người dùng
+    - Phân quyền tài khoản
 
 9. **Tra cứu thông tin**
-   - Tìm kiếm và hiển thị thông tin nhân viên
+    - Tìm kiếm và hiển thị thông tin nhân viên
 
 10. **Báo cáo**
     - Xuất báo cáo lương, thống kê nhân sự
-    - 
+    -
 ## Tất cả đều có thể xuất excel
 
 ## Yêu Cầu Hệ Thống
@@ -176,12 +176,12 @@ java -jar target/QLNS_Project-1.0-SNAPSHOT.jar
 ## Tài Khoản Mẫu
 
 - **Tài khoản quản trị viên:**
-  - Tên đăng nhập: `admin`
-  - Mật khẩu: `123`
+    - Tên đăng nhập: `admin`
+    - Mật khẩu: `123`
 
 - **Tài khoản nhân viên:**
-  - Tên đăng nhập: `vinh`
-  - Mật khẩu: `123`
+    - Tên đăng nhập: `vinh`
+    - Mật khẩu: `123`
 
 ## Cấu Trúc Thư Mục
 
