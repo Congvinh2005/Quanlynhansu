@@ -1,6 +1,7 @@
 package QLNS.controller;
 
 import QLNS.dao.TraCuuDAO;
+import QLNS.util.Session;
 import QLNS.view.FrmTraCuu;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
@@ -16,8 +17,31 @@ public class TraCuuController {
         this.view = view;
         this.dao = new TraCuuDAO();
 
-        loadTable("");
+        checkRole();
         initEvents();
+    }
+
+    private void checkRole() {
+        String role = Session.role;
+        String username = Session.username;
+
+        if (role.equalsIgnoreCase("Nhân viên")) {
+            // NẾU LÀ NHÂN VIÊN:
+            view.getTxtTimKiem().setEnabled(false);
+            view.getBtnTim().setEnabled(false);
+
+            List<Object[]> list = dao.getPersonal(username);
+            showData(list);
+
+            if (!list.isEmpty()) {
+                view.getTable().setRowSelectionInterval(0, 0);
+                fillFormFromTable();
+            }
+
+        } else {
+            // NẾU LÀ ADMIN:
+            loadTable("");
+        }
     }
 
     private void showData(List<Object[]> list) {

@@ -55,4 +55,49 @@ public class TraCuuDAO {
         }
         return list;
     }
+
+    public List<Object[]> getPersonal(String maNV) {
+        List<Object[]> list = new ArrayList<>();
+        // SQL giống hệt trên nhưng WHERE chính xác theo MaNhanVien
+        String sql = "SELECT nv.MaNhanVien, nv.HoTen, nv.NgaySinh, nv.GioiTinh, nv.DiaChi, nv.SDT, " +
+                "pb.TenPhongBan, cv.TenChucVu, " +
+                "COALESCE(l.LuongCoBan, 0), " +
+                "COALESCE(pc.TienPhuCap, 0), " +
+                "COALESCE(t.SoTien, 0), " +
+                "(COALESCE(l.LuongCoBan, 0) + COALESCE(pc.TienPhuCap, 0) + COALESCE(t.SoTien, 0)) AS ThucLinh " +
+                "FROM NhanVien nv " +
+                "LEFT JOIN PhongBan pb ON nv.MaPhongBan = pb.MaPhongBan " +
+                "LEFT JOIN ChucVu cv ON nv.MaChucVu = cv.MaChucVu " +
+                "LEFT JOIN Luong l ON nv.MaLuong = l.MaLuong " +
+                "LEFT JOIN PhuCap pc ON nv.MaPhuCap = pc.MaPhuCap " +
+                "LEFT JOIN Thuong t ON nv.MaThuong = t.MaThuong " +
+                "WHERE nv.MaNhanVien = ?"; // <--- Thay đổi ở đây
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, maNV); // Truyền chính xác mã NV
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+        return list;
+    }
+
+    private Object[] mapRow(ResultSet rs) throws Exception {
+        return new Object[]{
+                rs.getString("MaNhanVien"),
+                rs.getString("HoTen"),
+                rs.getString("NgaySinh"),
+                rs.getString("DiaChi"),
+                rs.getString("GioiTinh"),
+                rs.getString("SDT"),
+                rs.getString("TenPhongBan"),
+                rs.getString("TenChucVu"),
+                rs.getDouble(9),
+                rs.getDouble(10),
+                rs.getDouble(11),
+                rs.getDouble("ThucLinh")
+        };
+    }
 }

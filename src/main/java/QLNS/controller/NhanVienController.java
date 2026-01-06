@@ -31,8 +31,32 @@ public class NhanVienController {
             return;
         }
 
-        loadTable();
+        checkRole();
         initEvents();
+    }
+
+    private void checkRole() {
+        String currentRole = QLNS.util.Session.role;
+        String currentMaNV = QLNS.util.Session.username;
+
+        if (currentRole.equalsIgnoreCase("Nhân viên")) {
+            viewNV.getBtnThem().setVisible(false);
+            viewNV.getBtnXoa().setVisible(false);
+            viewNV.getBtnReset().setVisible(false);
+            viewNV.getTxtTim().setEnabled(false);
+            viewNV.getBtnTim().setEnabled(false);
+
+            List<NhanVien> myInfo = dao.getByMaNV(currentMaNV);
+            showData(myInfo);
+
+        } else {
+            // --- NẾU LÀ ADMIN ---
+            viewNV.getBtnThem().setVisible(true);
+            viewNV.getBtnXoa().setVisible(true);
+            viewNV.getBtnReset().setVisible(true);
+
+            loadTable();
+        }
     }
 
     public NhanVienController(FrmQLTK view) {
@@ -154,7 +178,17 @@ public class NhanVienController {
     }
 
     private void loadTable() {
-        if (viewNV != null) {
+        if (viewNV == null) return;
+
+        String currentRole = QLNS.util.Session.role;     // Lấy quyền hiện tại
+        String currentMaNV = QLNS.util.Session.username; // Lấy mã NV hiện tại
+
+        if (currentRole.equalsIgnoreCase("Nhân viên")) {
+            // --- NẾU LÀ NHÂN VIÊN: CHỈ LOAD CHÍNH HỌ ---
+            List<NhanVien> list = dao.getByMaNV(currentMaNV);
+            showData(list);
+        } else {
+            // --- NẾU LÀ ADMIN: LOAD TẤT CẢ ---
             List<NhanVien> list = dao.getAll();
             showData(list);
         }
@@ -204,12 +238,7 @@ public class NhanVienController {
 
         viewNV.getBtnSua().addActionListener(e -> {
             try {
-                String maNV_Cu = getSelectedMaNV();
-                if (maNV_Cu == null) {
-                    JOptionPane.showMessageDialog(viewNV, "Vui lòng chọn nhân viên cần sửa!");
-                    return;
-                }
-
+                String maNV_DuocChon = getSelectedMaNV();
                 NhanVien nv_Moi = getFormData();
 
                 if (nv_Moi.getMaNV().isEmpty() || nv_Moi.getHoTen().isEmpty()) {
@@ -220,7 +249,8 @@ public class NhanVienController {
                 if (!checkNgaySinh(nv_Moi.getNgaySinh())) return;
                 if (!checkSDT(nv_Moi.getSdt())) return;
 
-                if (!nv_Moi.getMaNV().equalsIgnoreCase(maNV_Cu)) {
+                if (!nv_Moi.getMaNV().equalsIgnoreCase(maNV_DuocChon)) {
+
                     List<NhanVien> list = dao.getAll();
                     for (NhanVien existing : list) {
                         if (existing.getMaNV().equalsIgnoreCase(nv_Moi.getMaNV())) {
@@ -230,8 +260,10 @@ public class NhanVienController {
                     }
                 }
 
-                if (dao.update(nv_Moi, maNV_Cu)) {
+                // 5. Thực hiện Update
+                if (dao.update(nv_Moi, maNV_DuocChon)) {
                     JOptionPane.showMessageDialog(viewNV, "Cập nhật thành công!");
+
                     loadTable();
                     clearForm();
                 } else {
@@ -239,6 +271,7 @@ public class NhanVienController {
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(viewNV, "Lỗi sửa: " + ex.getMessage());
+                ex.printStackTrace();
             }
         });
 

@@ -49,6 +49,31 @@ public class NhanVienDAO {
         }
         return list;
     }
+    public List<NhanVien> getByMaNV(String maNV) {
+        List<NhanVien> list = new ArrayList<>();
+        String sql = "SELECT * FROM NhanVien WHERE MaNhanVien = ?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, maNV);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                NhanVien nv = new NhanVien();
+                nv.setMaNV(rs.getString("MaNhanVien"));
+                nv.setHoTen(rs.getString("HoTen"));
+                nv.setNgaySinh(rs.getString("NgaySinh"));
+                nv.setDiaChi(rs.getString("DiaChi"));
+                nv.setGioiTinh(rs.getString("GioiTinh"));
+                nv.setSdt(rs.getString("SDT"));
+                list.add(nv);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     public boolean insert(NhanVien nv) {
         String sql = "INSERT INTO NhanVien(MaNhanVien, HoTen, NgaySinh, DiaChi, GioiTinh, SDT) VALUES (?,?,?,?,?,?)";
