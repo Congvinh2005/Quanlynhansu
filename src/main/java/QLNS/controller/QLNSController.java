@@ -36,7 +36,7 @@ public class QLNSController {
             daoCV = new ChucVuDAO();
         } catch (Exception e) { e.printStackTrace(); }
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         loadData();
         initEvents();
     }
@@ -140,10 +140,10 @@ public class QLNSController {
     private void lockTableEditing() {
         JTable table = view.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
+
         table.setDefaultEditor(Object.class, null);
 
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
+
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"Mã NV", "Họ tên", "Phòng ban", "Chức vụ"}, 0) {
             @Override

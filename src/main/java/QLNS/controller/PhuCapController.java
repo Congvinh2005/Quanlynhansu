@@ -28,7 +28,7 @@ public class PhuCapController {
             return;
         }
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         loadTable();
         initEvents();
     }
@@ -128,10 +128,8 @@ public class PhuCapController {
     private void lockTableEditing() {
         JTable table = view.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
         table.setDefaultEditor(Object.class, null);
 
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"Mã PC", "Tên PC", "Tiền PC", "Ngày HL"}, 0) {
             @Override

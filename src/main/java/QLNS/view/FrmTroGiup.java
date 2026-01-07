@@ -23,9 +23,9 @@ public class FrmTroGiup extends JPanel {
         addLabel(pnlContent, "Nguyễn Quốc Bảo - Trần Hà Linh", 20, false);
         addLabel(pnlContent, "Số hotline: 0389617834 - 01284924563", 20, false);
         addLabel(pnlContent, "Địa chỉ: The Pizza Company cơ sở chính tại Linh Đàm, Số 3 dãy a, KDT Tây Nam, Hoàng Mai, Hà Nội", 20, false);
-
-        pnlContent.add(new JLabel(" "));
-        pnlContent.add(new JLabel(" "));
+//
+//        pnlContent.add(new JLabel(" "));
+//        pnlContent.add(new JLabel(" "));
 
         addLabel(pnlContent, "Phần mềm trên được phát triển bởi các thành viên CTY 74DCTT27_UTT", 20, false);
         addLabel(pnlContent, "Rất mong quý khách hàng sử dụng hài lòng và đưa ra lời nhận xét góp ý, thay mặt đội ngũ, Tôi Đào Văn Vinh trưởng nhóm xin trân trọng và cảm ơn!", 20, false);
@@ -38,9 +38,9 @@ public class FrmTroGiup extends JPanel {
     private void addLabel(JPanel panel, String text, int fontSize, boolean isBold) {
         JLabel lbl = new JLabel("<html><div style='text-align: center; width: 900px;'>" + text + "</div></html>");
 
-        lbl.setForeground(Color.WHITE); // Chữ màu trắng
+        lbl.setForeground(Color.WHITE);
         lbl.setFont(new Font("Arial", isBold ? Font.BOLD : Font.PLAIN, fontSize));
-        lbl.setHorizontalAlignment(SwingConstants.CENTER); // Căn chữ ra giữa ô lưới
+        lbl.setHorizontalAlignment(SwingConstants.CENTER);
 
         panel.add(lbl);
     }

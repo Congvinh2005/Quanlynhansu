@@ -22,6 +22,7 @@ public class FrmLogin extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
         initUI();
     }
 

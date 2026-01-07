@@ -16,6 +16,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static QLNS.util.Session.role;
+
 public class NhanVienController {
 
     private FrmThongTinCaNhan viewNV;
@@ -31,9 +33,20 @@ public class NhanVienController {
             return;
         }
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         checkRole();
         initEvents();
+    }
+
+    public NhanVienController(FrmQLTK view) {
+        this.viewTK = view;
+        try {
+            this.dao = new NhanVienDAO();
+        }
+        catch (Exception e) {
+            return;
+        }
+        loadComboBoxMaNV();
     }
 
     private void checkRole() {
@@ -51,7 +64,7 @@ public class NhanVienController {
             showData(myInfo);
 
         } else {
-            // --- NẾU LÀ ADMIN ---
+
             viewNV.getBtnThem().setVisible(true);
             viewNV.getBtnXoa().setVisible(true);
             viewNV.getBtnReset().setVisible(true);
@@ -60,16 +73,11 @@ public class NhanVienController {
         }
     }
 
-    public NhanVienController(FrmQLTK view) {
-        this.viewTK = view;
-        try { this.dao = new NhanVienDAO(); }
-        catch (Exception e) { return; }
-        loadComboBoxMaNV();
-    }
+
 
     private void showData(List<NhanVien> list) {
         DefaultTableModel model = (DefaultTableModel) viewNV.getTable().getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
+        model.setRowCount(0);
         for (NhanVien nv : list) {
             model.addRow(new Object[]{
                     nv.getMaNV(),
@@ -179,15 +187,15 @@ public class NhanVienController {
     private void loadTable() {
         if (viewNV == null) return;
 
-        String currentRole = QLNS.util.Session.role;     // Lấy quyền hiện tại
-        String currentMaNV = QLNS.util.Session.username; // Lấy mã NV hiện tại
+        String currentRole = QLNS.util.Session.role;
+        String currentMaNV = QLNS.util.Session.username;
 
         if (currentRole.equalsIgnoreCase("Nhân viên")) {
-            // --- NẾU LÀ NHÂN VIÊN: CHỈ LOAD CHÍNH HỌ ---
+
             List<NhanVien> list = dao.getByMaNV(currentMaNV);
             showData(list);
         } else {
-            // --- NẾU LÀ ADMIN: LOAD TẤT CẢ ---
+
             List<NhanVien> list = dao.getAll();
             showData(list);
         }
@@ -259,7 +267,7 @@ public class NhanVienController {
                     }
                 }
 
-                // 5. Thực hiện Update
+
                 if (dao.update(nv_Moi, maNV_DuocChon)) {
                     JOptionPane.showMessageDialog(viewNV, "Cập nhật thành công!");
 
@@ -319,7 +327,8 @@ public class NhanVienController {
             try {
                 List<String> listMa = dao.getAllMaNV();
                 viewTK.getCboMaNV().removeAllItems();
-                for (String ma : listMa) viewTK.getCboMaNV().addItem(ma);
+                for (String ma : listMa)
+                    viewTK.getCboMaNV().addItem(ma);
             } catch (Exception e) {}
         }
     }
@@ -327,10 +336,9 @@ public class NhanVienController {
     private void lockTableEditing() {
         JTable table = viewNV.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
+
         table.setDefaultEditor(Object.class, null);
 
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"Mã NV", "Họ tên", "Ngày sinh", "Giới tính", "SĐT", "Địa chỉ"}, 0) {
             @Override

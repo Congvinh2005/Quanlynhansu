@@ -38,7 +38,9 @@ public class TaiKhoanDAO {
         String sql = "SELECT * FROM TaiKhoan";
 
         try (
-                Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+                Connection con = DBConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 TaiKhoan tk = new TaiKhoan();
                 tk.setId(rs.getInt("ID"));
@@ -58,7 +60,8 @@ public class TaiKhoanDAO {
         String sql = "INSERT INTO TaiKhoan(TenTaiKhoan, MatKhau, LoaiTaiKhoan, MaNhanVien) "
                 + "VALUES (?,?,?,?)";
         try (
-                Connection con = DBConnection.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+                Connection con = DBConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, tk.getTenTaiKhoan());
             ps.setString(2, tk.getMatKhau());
             ps.setString(3, tk.getLoaiTaiKhoan());

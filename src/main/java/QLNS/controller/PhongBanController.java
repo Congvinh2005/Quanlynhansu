@@ -28,7 +28,7 @@ public class PhongBanController {
             return;
         }
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         loadTable();
         initEvents();
     }

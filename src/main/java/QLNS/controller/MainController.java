@@ -21,7 +21,7 @@ public class MainController {
             view.getMnuQuanLy().setEnabled(false);
             view.getmniQuanLyTaiKhoan().setEnabled(false);
             view.getMniBaoCao().setEnabled(false);
-            // ... các phân quyền khác giữ nguyên
+
             view.getMniPhongBan().setEnabled(false);
             view.getMniChucVu().setEnabled(false);
             view.getMniPhuCap().setEnabled(false);

@@ -18,8 +18,7 @@ public class TraCuuController {
     public TraCuuController(FrmTraCuu view) {
         this.view = view;
         this.dao = new TraCuuDAO();
-
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+ // ⭐ FIX: Khóa không cho sửa JTable
         checkRole();
         initEvents();
     }
@@ -29,7 +28,7 @@ public class TraCuuController {
         String username = Session.username;
 
         if (role.equalsIgnoreCase("Nhân viên")) {
-            // NẾU LÀ NHÂN VIÊN:
+
             view.getTxtTimKiem().setEnabled(false);
             view.getBtnTim().setEnabled(false);
 
@@ -42,7 +41,7 @@ public class TraCuuController {
             }
 
         } else {
-            // NẾU LÀ ADMIN:
+
             loadTable("");
         }
     }
@@ -63,15 +62,15 @@ public class TraCuuController {
     private void lockTableEditing() {
         JTable table = view.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
+
         table.setDefaultEditor(Object.class, null);
 
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
+
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"Mã NV", "Họ tên", "Ngày sinh", "Địa chỉ", "Giới tính", "SĐT", "Phòng ban", "Chức vụ", "Lương CB", "Phụ cấp", "Thưởng", "Thực lĩnh"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // khóa toàn bộ ô
+                return false;
             }
         };
         table.setModel(model);

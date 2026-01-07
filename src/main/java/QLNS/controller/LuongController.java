@@ -25,16 +25,11 @@ public class LuongController {
             return;
         }
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         loadTable();
         initEvents();
     }
 
-    // =================================================================
-    // LOGIC METHODS (MOVED FROM VIEW)
-    // =================================================================
-
-    // 1. Show data on table
     private void showData(List<Luong> list) {
         DefaultTableModel model = (DefaultTableModel) view.getTable().getModel();
         model.setRowCount(0);
@@ -47,7 +42,7 @@ public class LuongController {
         }
     }
 
-    // 2. Get data from form
+
     private Luong getFormData() throws NumberFormatException {
         double luong = 0;
         String luongStr = view.getTxtLuongCoBan().getText().trim();
@@ -61,7 +56,7 @@ public class LuongController {
         );
     }
 
-    // 3. Fill form from table (Lock ID)
+
     private void fillFormFromTable() {
         JTable table = view.getTable();
         int row = table.getSelectedRow();
@@ -72,12 +67,11 @@ public class LuongController {
             Object ghiChu = table.getValueAt(row, 2);
             view.getTxtGhiChu().setText(ghiChu != null ? ghiChu.toString() : "");
 
-            // Lock ID field
             view.getTxtMaLuong().setEnabled(false);
         }
     }
 
-    // 4. Get selected ID
+
     private String getSelectedMaLuong() {
         int row = view.getTable().getSelectedRow();
         if (row >= 0) {
@@ -86,7 +80,6 @@ public class LuongController {
         return null;
     }
 
-    // 5. Clear form (Unlock ID)
     private void clearForm() {
         view.getTxtMaLuong().setText("");
         view.getTxtLuongCoBan().setText("");
@@ -106,10 +99,9 @@ public class LuongController {
     private void lockTableEditing() {
         JTable table = view.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
+
         table.setDefaultEditor(Object.class, null);
 
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"Mã lương", "Lương cơ bản", "Ghi chú"}, 0) {
             @Override

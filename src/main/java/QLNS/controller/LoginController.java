@@ -56,8 +56,8 @@ public class LoginController {
             TaiKhoan acc = dao.login(tk, mk);
 
             if (acc != null) {
-                QLNS.util.Session.username = acc.getMaNhanVien(); // Lưu mã NV đang đăng nhập
-                QLNS.util.Session.role = acc.getLoaiTaiKhoan();   // Lưu quyền
+                QLNS.util.Session.username = acc.getMaNhanVien();
+                QLNS.util.Session.role = acc.getLoaiTaiKhoan();
                 new FrmMain(acc.getMaNhanVien(), acc.getLoaiTaiKhoan()).setVisible(true);
                 view.dispose();
             } else {

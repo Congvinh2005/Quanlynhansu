@@ -31,7 +31,6 @@ public class BangLuongController {
     private ThuongDAO daoThuong;
     private PhuCapDAO daoPC;
 
-    // Cache lists for lookup
     private List<Luong> listLuongGoc;
     private List<Thuong> listThuongGoc;
     private List<PhuCap> listPhuCapGoc;
@@ -45,7 +44,7 @@ public class BangLuongController {
             daoPC = new PhuCapDAO();
         } catch (Exception e) { e.printStackTrace(); }
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         loadData();
         initEvents();
     }
@@ -57,7 +56,6 @@ public class BangLuongController {
 
         loadCombos(listLuongGoc, listThuongGoc, listPhuCapGoc);
 
-        // Load Table
         loadTable();
     }
 
@@ -146,7 +144,7 @@ public class BangLuongController {
         return 0;
     }
 
-    // 5. Get Selected IDs
+
     private String getSelectedMaLuong() {
         int index = view.getCboLuongCoBan().getSelectedIndex();
         if (index > 0 && index - 1 < listLuongGoc.size()) {
@@ -195,10 +193,9 @@ public class BangLuongController {
     private void lockTableEditing() {
         JTable table = view.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
+
         table.setDefaultEditor(Object.class, null);
 
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"Mã NV", "Họ tên", "Lương CB", "Thưởng", "Phụ cấp", "Thực lĩnh"}, 0) {
             @Override

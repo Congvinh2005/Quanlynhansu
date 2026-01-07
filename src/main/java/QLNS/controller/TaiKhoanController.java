@@ -322,29 +322,12 @@ public class TaiKhoanController {
         new LoaiTaiKhoanController(view);
         new NhanVienController(view);
 
-        lockTableEditing();   // ⭐ FIX: Khóa không cho sửa JTable
+        lockTableEditing();
         loadTable();
         initEvents();
     }
 
-    // ==================== FIX 1: KHÓA CHỈNH SỬA BẢNG ====================
-    private void lockTableEditing() {
-        JTable table = view.getTable();
 
-        // Cách 1: Không cho chỉnh sửa tất cả các ô
-        table.setDefaultEditor(Object.class, null);
-
-        // Cách 2 (phòng trường hợp model bị reset): override isCellEditable
-        DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"Tên TK", "Mật khẩu", "Loại TK", "Mã NV"}, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // khóa toàn bộ ô
-            }
-        };
-        table.setModel(model);
-    }
-    // ==================================================================
 
     private void showData(List<TaiKhoan> list) {
         DefaultTableModel model = (DefaultTableModel) view.getTable().getModel();
@@ -372,6 +355,22 @@ public class TaiKhoanController {
                 loaiTK,
                 maNV
         );
+    }
+
+
+    private void lockTableEditing() {
+        JTable table = view.getTable();
+
+        table.setDefaultEditor(Object.class, null);
+
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"Tên TK", "Mật khẩu", "Loại TK", "Mã NV"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        table.setModel(model);
     }
 
     private void fillFormFromTable() {

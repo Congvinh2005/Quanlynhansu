@@ -136,27 +136,68 @@ public class FrmMain extends JFrame {
         pnlContent.setBackground(Color.WHITE);
         pnlContent.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JPanel pnlWelcome = new JPanel();
-        pnlWelcome.setLayout(new BoxLayout(pnlWelcome, BoxLayout.Y_AXIS));
+//        JPanel pnlWelcome = new JPanel();
+//        pnlWelcome.setLayout(new BoxLayout(pnlWelcome, BoxLayout.Y_AXIS));
+//        pnlWelcome.setBackground(Color.WHITE);
+//        pnlWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+//        JLabel lblWelcome = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ NHÂN SỰ");
+//        lblWelcome.setFont(new Font("Segoe UI", Font.BOLD, 32));
+//        lblWelcome.setForeground(PRIMARY_COLOR);
+//        lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        JLabel lblSub = new JLabel("Phần mềm hỗ trợ quản lý hồ sơ, lương thưởng hiệu quả ");
+//        lblSub.setFont(new Font("Segoe UI", Font.ITALIC, 18));
+//        lblSub.setForeground(Color.GRAY);
+//        lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        pnlWelcome.add(Box.createVerticalGlue()); // Đẩy nội dung vào giữa theo chiều dọc
+//        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 20)));
+//        pnlWelcome.add(lblWelcome);
+//        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 10)));
+//        pnlWelcome.add(lblSub);
+//        pnlWelcome.add(Box.createVerticalGlue());
+
+
+        // nếu dung border thì xấu hơn
+//        JPanel pnlWelcome = new JPanel(new BorderLayout());
+//        pnlWelcome.setBackground(Color.WHITE);
+//        JLabel lblWelcome = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ NHÂN SỰ", JLabel.CENTER);
+//        lblWelcome.setFont(new Font("Segoe UI", Font.BOLD, 32));
+//        lblWelcome.setForeground(PRIMARY_COLOR);
+//
+//        JLabel lblSub = new JLabel("Phần mềm hỗ trợ quản lý hồ sơ, lương thưởng hiệu quả", JLabel.CENTER);
+//        lblSub.setFont(new Font("Segoe UI", Font.ITALIC, 18));
+//        lblSub.setForeground(Color.GRAY);
+//        pnlWelcome.add(lblWelcome, BorderLayout.CENTER);
+//        pnlWelcome.add(lblSub, BorderLayout.SOUTH);
+
+
+        //Girdbaglyout
+        JPanel pnlWelcome = new JPanel(new GridBagLayout());
         pnlWelcome.setBackground(Color.WHITE);
-        pnlWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         JLabel lblWelcome = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ NHÂN SỰ");
         lblWelcome.setFont(new Font("Segoe UI", Font.BOLD, 32));
         lblWelcome.setForeground(PRIMARY_COLOR);
-        lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblSub = new JLabel("Phần mềm hỗ trợ quản lý hồ sơ, lương thưởng hiệu quả");
         lblSub.setFont(new Font("Segoe UI", Font.ITALIC, 18));
         lblSub.setForeground(Color.GRAY);
-        lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        pnlWelcome.add(Box.createVerticalGlue()); // Đẩy nội dung vào giữa theo chiều dọc
-        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 20)));
-        pnlWelcome.add(lblWelcome);
-        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 10)));
-        pnlWelcome.add(lblSub);
-        pnlWelcome.add(Box.createVerticalGlue());
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 10, 0);
+        pnlWelcome.add(lblWelcome, gbc);
+
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        pnlWelcome.add(lblSub, gbc);
+
+
 
         JLabel lblFooter = new JLabel("Phát triển bởi Vinh - Thanh - Quang Anh © 2025", SwingConstants.CENTER);
         lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -213,32 +254,56 @@ public class FrmMain extends JFrame {
     public void resetToWelcomeScreen() {
         pnlContent.removeAll();
 
-        JPanel pnlWelcome = new JPanel();
-        pnlWelcome.setLayout(new BoxLayout(pnlWelcome, BoxLayout.Y_AXIS));
+//        JPanel pnlWelcome = new JPanel();
+//        pnlWelcome.setLayout(new BoxLayout(pnlWelcome, BoxLayout.Y_AXIS));
+//        pnlWelcome.setBackground(Color.WHITE);
+//        pnlWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        JLabel lblWelcome = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ NHÂN SỰ");
+//        lblWelcome.setFont(new Font("Segoe UI", Font.BOLD, 32));
+//        lblWelcome.setForeground(PRIMARY_COLOR);
+//        lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        JLabel lblSub = new JLabel("Phần mềm hỗ trợ quản lý hồ sơ, lương thưởng hiệu quả");
+//        lblSub.setFont(new Font("Segoe UI", Font.ITALIC, 18));
+//        lblSub.setForeground(Color.GRAY);
+//        lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
+//
+//        pnlWelcome.add(Box.createVerticalGlue()); // Đẩy nội dung vào giữa theo chiều dọc
+//        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 20)));
+//        pnlWelcome.add(lblWelcome);
+//        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 10)));
+//        pnlWelcome.add(lblSub);
+//        pnlWelcome.add(Box.createVerticalGlue());
+//
+
+        JPanel pnlWelcome = new JPanel(new GridBagLayout());
         pnlWelcome.setBackground(Color.WHITE);
-        pnlWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         JLabel lblWelcome = new JLabel("CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ NHÂN SỰ");
         lblWelcome.setFont(new Font("Segoe UI", Font.BOLD, 32));
         lblWelcome.setForeground(PRIMARY_COLOR);
-        lblWelcome.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel lblSub = new JLabel("Phần mềm hỗ trợ quản lý hồ sơ, lương thưởng hiệu quả");
         lblSub.setFont(new Font("Segoe UI", Font.ITALIC, 18));
         lblSub.setForeground(Color.GRAY);
-        lblSub.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        pnlWelcome.add(Box.createVerticalGlue()); // Đẩy nội dung vào giữa theo chiều dọc
-        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 20)));
-        pnlWelcome.add(lblWelcome);
-        pnlWelcome.add(Box.createRigidArea(new Dimension(0, 10)));
-        pnlWelcome.add(lblSub);
-        pnlWelcome.add(Box.createVerticalGlue());
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 10, 0);
+        pnlWelcome.add(lblWelcome, gbc);
 
-        JLabel lblFooter = new JLabel("Phát triển bởi Vinh - Thanh - Quang Anh © 2025", SwingConstants.CENTER);
+        gbc.gridy = 1;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        pnlWelcome.add(lblSub, gbc);
+        JLabel lblFooter = new JLabel("Phát triển bởi [ Vinh  - Thanh - Quang Anh ] © 2025-2026", SwingConstants.CENTER);
         lblFooter.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         lblFooter.setForeground(Color.GRAY);
         lblFooter.setBorder(new EmptyBorder(10, 0, 0, 0));
+
 
         pnlContent.add(pnlWelcome, BorderLayout.CENTER);
         pnlContent.add(lblFooter, BorderLayout.SOUTH);
