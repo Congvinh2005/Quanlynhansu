@@ -1,6 +1,6 @@
 # Ứng Dụng Quản Lý Nhân Sự (QLNS)
 
-**Tác giả:** Thành Vinh Quang  
+**Tác giả:** Vinh  
 **Ngày tạo:** 06/01/2026
 
 ## Mô Tả Dự Án
@@ -218,6 +218,6 @@ QLNS_Project/
 
 ## Tác Giả
 
-**Thành Vinh Quang**  
+** Vinh **  
 Email: [daovinhgm2005@gmail.com]  
 GitHub: [https://github.com/Congvinh2005]
